@@ -16,7 +16,6 @@
     "express": "^4.18.1",
     "fastest-validator": "^1.12.0",
     "http-proxy": "^1.18.1",
-    "lodash": "^4.17.21",
     "mocha": "^10.0.0",
     "moment": "^2.29.4",
     "mongoose": "^6.5.2",
@@ -25,6 +24,7 @@
     "supertest": "^6.2.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1"
   }
 }

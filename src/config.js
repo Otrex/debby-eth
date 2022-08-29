@@ -11,6 +11,6 @@ module.exports = {
   },
   etherScan: {
     apiKey: process.env.ETHER_SCAN_API_KEY,
-    baseUrl: process.env.ETHER_SCAN_BASE_URL
-  }
+    baseUrl: process.env.ETHER_SCAN_BASE_URL,
+  },
 };

@@ -4,10 +4,10 @@ const createMongodbConnection = require("./database");
 
 // createMongodbConnection()
 //   .then(() => {
-    app.listen(config.app.port, () => {
-      console.log(`App has started on port: ${config.app.port}`);
-    });
-  // })
-  // .catch((err) => {
-  //   console.log(err);
-  // });
+app.listen(config.app.port, () => {
+  console.log(`App has started on port: ${config.app.port}`);
+});
+// })
+// .catch((err) => {
+//   console.log(err);
+// });

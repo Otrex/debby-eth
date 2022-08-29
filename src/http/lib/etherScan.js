@@ -1,5 +1,5 @@
-const axios = require('axios').default;
-const { etherScan } = require('../../config');
+const axios = require("axios").default;
+const { etherScan } = require("../../config");
 const ETHER_UNIT = Math.pow(10, 18);
 
 class EtherScan {
@@ -9,13 +9,13 @@ class EtherScan {
     this.defaultOptions = defaultOptions;
     this.request = axios.create({
       baseURL: etherScan.baseUrl,
-    })
+    });
   }
 
   /**
    * @desc Options parameter contains
-   * @param {String} module 
-   * @param {String} address 
+   * @param {String} module
+   * @param {String} address
    * ...
    */
   async makeRequest(options = {}) {
@@ -24,7 +24,14 @@ class EtherScan {
     return response.data;
   }
 
-  async getNormalTrxByAddr(address, startblock = 0, endblock = 99999999, page = 1, offset = 20, sort = 'asc') {
+  async getNormalTrxByAddr(
+    address,
+    startblock = 0,
+    endblock = 99999999,
+    page = 1,
+    offset = 20,
+    sort = "asc"
+  ) {
     return this.makeRequest({
       sort,
       page,
@@ -32,11 +39,18 @@ class EtherScan {
       address,
       endblock,
       startblock,
-      action: 'txlist',
-    })
+      action: "txlist",
+    });
   }
 
-  async getInternalTrxByAddr(address, startblock = 0, endblock = 99999999, page = 1, offset = 20, sort = 'asc') {
+  async getInternalTrxByAddr(
+    address,
+    startblock = 0,
+    endblock = 99999999,
+    page = 1,
+    offset = 20,
+    sort = "asc"
+  ) {
     return this.makeRequest({
       sort,
       page,
@@ -44,26 +58,46 @@ class EtherScan {
       address,
       endblock,
       startblock,
-      action: 'txlistinternal',
-    })
+      action: "txlistinternal",
+    });
   }
 
-  async getBalanceFromAddr(address, tag = 'latest') {
+  async getBalanceFromAddr(address, tag = "latest") {
     return this.makeRequest({
       tag,
       address,
-      action: 'balance'
-    })
+      action: "balance",
+    });
   }
 
-
-  async getBalanceHistory(address, startblock = 0, endblock = 99999999, page = 1, offset = 20, sort = 'asc') {
+  async getBalanceHistory(
+    address,
+    startblock = 0,
+    endblock = 99999999,
+    page = 1,
+    offset = 100,
+    sort = "asc"
+  ) {
     const [internalTrx, normalTrx] = await Promise.all([
-      this.getInternalTrxByAddr(address, startblock, endblock, page, offset, sort),
-      this.getNormalTrxByAddr(address, startblock, endblock, page, offset, sort)
+      this.getInternalTrxByAddr(
+        address,
+        startblock,
+        endblock,
+        page,
+        offset,
+        sort
+      ),
+      this.getNormalTrxByAddr(
+        address,
+        startblock,
+        endblock,
+        page,
+        offset,
+        sort
+      ),
     ]);
 
-    let result = [...internalTrx.result, ...normalTrx.result]
+    let result = [...internalTrx.result, ...normalTrx.result];
     result = result.sort((a, b) => +a.timeStamp - +b.timeStamp);
 
     // This is the store for the balance at that transaction block
@@ -77,26 +111,27 @@ class EtherScan {
 
       // This was done because internal transactions do not come with gasPrice
       // so calculations to get price is done directly (coverts the value to ethereum)
-      const gas = "gasPrice" in e 
-        ? e.gasUsed * e.gasPrice / ETHER_UNIT
-        : e.gasUsed / ETHER_UNIT;
+      const gas =
+        "gasPrice" in e
+          ? (e.gasUsed * e.gasPrice) / ETHER_UNIT
+          : e.gasUsed / ETHER_UNIT;
 
       // this updates the currentbalance for the given transaction data
-      currentBalance = moneyIn 
-        ? currentBalance + value 
-        : currentBalance - (value + gas)
+      currentBalance = moneyIn
+        ? currentBalance + value
+        : currentBalance - (value + gas);
 
       return {
         to: e.to,
         from: e.from,
         balance: currentBalance,
         timeStamp: new Date(+e.timeStamp * 1000),
-      }
-    })
+      };
+    });
   }
 }
 
 module.exports = new EtherScan({
-  module: 'account',
-  apiKey: etherScan.apiKey
+  module: "account",
+  apiKey: etherScan.apiKey,
 });
